@@ -11,6 +11,7 @@ const card = () => {
       setCity(inputcity.target.value);
     };
 
+    
     const weatherResponse = () => {
         fetch(
           `https:api.openweathermap.org/data/2.5/weather?q=${city}&appid=e121c22ed6689316d5aeea88b6d59880`
@@ -66,15 +67,15 @@ const card = () => {
           </div>
         ) : null}
 
-        <div className="input-botao">
+        <div className="input-button">
           <input
             value={city}
             onChange={onChange}
-            placeholder="Type your city here :)"
+            placeholder="Type your city here"
           ></input>
-          <div className="button" onClick={weatherResponse}>
-            Search
-          </div>
+            <div className="button" onClick={weatherResponse}>
+                Search
+            </div>
         </div>
       </>
     );
