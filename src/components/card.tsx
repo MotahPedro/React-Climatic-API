@@ -45,16 +45,21 @@ const card = () => {
                     throw new Error("City not found");
                 }
             } catch (error) {
-                
+                console.log(error)
+                setTime(null)
             }
         }
+        
+        useEffect(() => {
+            const fetchData = async () =>{
+                if(city) {
+                    await geoResponse()
+                }
+            }
+            
+            fetchData()
+        }, [city])
     }
-
-    useEffect(() => {
-        if(city) {
-            geoResponse()
-        }
-    }, [city])
 
 
     return (
@@ -92,16 +97,16 @@ const card = () => {
           </div>
         ) : null}
 
-        <div className="input-button">
+        <form className="input-button" onSubmit={weatherResponse}>
           <input
             value={city}
             onChange={onChange}
             placeholder="Type your city here"
           ></input>
-            <div className="button" onClick={weatherResponse}>
+            <button className="button" type="submit">
                 Search
-            </div>
-        </div>
+            </button>
+        </form>
       </>
     );
 }
