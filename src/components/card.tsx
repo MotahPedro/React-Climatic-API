@@ -1,36 +1,61 @@
-import React from "react";
-import { useState } from 'react'
+import React, { useState, useEffect } from "react";
 
 import "../assets/css/card.css"
 
 const card = () => {
     const [city, setCity] = useState("")
     const [time, setTime] = useState<null | any>(null)
+    const [lat, setLat] = useState<number | null>(null)
+    const [lon, setLon] = useState<number | null>(null)
 
     const onChange = (inputcity: React.ChangeEvent<HTMLInputElement>) => {
       setCity(inputcity.target.value);
     };
 
-    
-    const weatherResponse = () => {
-        fetch(
-          `https:api.openweathermap.org/data/2.5/weather?q=${city}&appid=e121c22ed6689316d5aeea88b6d59880`
-        )
-          .then((res) => {
-            if (res.status === 200) {
-              return res.json();
+    const geoResponse = async () => {
+        try {
+            const response = await fetch(
+              `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=e121c22ed6689316d5aeea88b6d59880`
+            );
+            const data = await response.json()
+
+            if (data.length > 0) {
+                setLat(data[0].lat)
+                setLon(data[0].lon)
             } else {
-              throw new Error("City not found");
+                throw new Error("City not found")
             }
-          })
-          .then((data) => {
-            setTime(data);
-          })
-          .catch((error) => {
-            console.error(error);
-            setTime(null);
-          });
+        } catch (error) {
+            console.log(error);
+            
+        }
     }
+
+    
+    const weatherResponse = async () => {
+        if (lat !== null && lon !== null){
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=e121c22ed6689316d5aeea88b6d59880`
+                )
+                if (response.status === 200) {
+                    const data = response.json();
+                    setTime(data)
+                } else {
+                    throw new Error("City not found");
+                }
+            } catch (error) {
+                
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(city) {
+            geoResponse()
+        }
+    }, [city])
+
 
     return (
       <>
