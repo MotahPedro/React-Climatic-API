@@ -1,10 +1,10 @@
 import React from 'react'
-import './App.css'
+import './assets/css/body.css'
 
 const App: React.FC = () => {
   return (
     <div>
-      
+
     </div>
   )
 }
