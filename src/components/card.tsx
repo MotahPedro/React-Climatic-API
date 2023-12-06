@@ -56,7 +56,10 @@ const card = () => {
                     <i className="humidity"></i>Humidity:{" "}
                     <span>{time.main.humidity}</span>%
                   </li>
-                  
+                  <li>
+                    <i className="wind"></i>Wind: <span>{time.wind.speed}</span>
+                    Km
+                  </li>
                 </ul>
               </div>
             </div>
