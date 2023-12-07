@@ -42,7 +42,7 @@ const Card = () => {
 
               <h1 className="temperature-icon">
                 <img src={time.current.condition.icon} alt=""></img>
-                <span>{time.current.temp_c}</span>°C
+                <span className="celsius">{time.current.temp_c}</span>°C
               </h1>
             </div>
             <div>
@@ -63,7 +63,7 @@ const Card = () => {
         </div>
       ) : null}
 
-      <div className="input-botao">
+      <div className="input-button">
         <input
           value={city}
           onChange={onChange}
