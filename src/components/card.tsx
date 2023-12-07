@@ -1,114 +1,80 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState } from "react";
 
-import "../assets/css/card.css"
+import "../assets/css/card.css";
 
-const card = () => {
-    const [city, setCity] = useState("")
-    const [time, setTime] = useState<null | any>(null)
-    const [lat, setLat] = useState<number | null>(null)
-    const [lon, setLon] = useState<number | null>(null)
+const Card = () => {
+  const [city, setCity] = useState("");
+  const [time, setTime] = useState<null | any>(null)
 
-    const onChange = (inputcity: React.ChangeEvent<HTMLInputElement>) => {
-      setCity(inputcity.target.value);
-    };
+  const onChange = (inputCity: React.ChangeEvent<HTMLInputElement>) => {
+    setCity(inputCity.target.value);
+  }
+  const onClick = async () => {
+    try {
+      const response = await fetch(
+        `https://api.weatherapi.com/v1/current.json?key=bb36b42150f244a7a3b142301221205&q=${city}&aqi=no&lang=pt`
+      )
+      
+      if (response.status === 200) {
+        const data = await response.json()
+        setTime(data)
+      } else {
+        throw new Error("City not found")
+      }
 
-    const geoResponse = async () => {
-        try {
-            const response = await fetch(
-              `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=e121c22ed6689316d5aeea88b6d59880`
-            );
-            const data = await response.json()
-
-            if (data.length > 0) {
-                setLat(data[0].lat)
-                setLon(data[0].lon)
-            } else {
-                throw new Error("City not found")
-            }
-        } catch (error) {
-            console.log(error);
-            
-        }
+    } catch (error) {
+      console.error(error)
+      setTime(null)
     }
+  }
 
-    
-    const weatherResponse = async () => {
-        if (lat !== null && lon !== null){
-            try {
-                const response = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=e121c22ed6689316d5aeea88b6d59880`
-                )
-                if (response.status === 200) {
-                    const data = response.json();
-                    setTime(data)
-                } else {
-                    throw new Error("City not found");
-                }
-            } catch (error) {
-                console.log(error)
-                setTime(null)
-            }
-        }
-        
-        useEffect(() => {
-            const fetchData = async () =>{
-                if(city) {
-                    await geoResponse()
-                }
-            }
-            
-            fetchData()
-        }, [city])
-    }
+  return (
+    <>
+      {time ? (
+        <div className="container">
+          <div className={`card horario${time.current.is_day}`}>
+            <div className="cardTop">
+              <h2>
+                <i className="location"></i>
+                {time.location.name}
+              </h2>
 
+              <h1 className="temperature-icon">
+                <img src={time.current.condition.icon} alt=""></img>
+                <span>{time.current.temp_c}</span>°C
+              </h1>
+            </div>
+            <div>
+              <h2 className="condition">{time.current.condition.text}</h2>
 
-    return (
-      <>
-        {time ? (
-          <div className="container">
-            <div className={`card time ${time.current.is_day}`}>
-              <div className="cardTop">
-                <h2>
-                  <i className="map"></i>
-                  {time.name}
-                </h2>
-
-                <h1 className="temperature-icon">
-                  <img src={time.weather.icon} alt="" />
-                  °C
-                </h1>
-              </div>
-
-              <div>
-                <h2 className="condition">{time.weather.description}</h2>
-
-                <ul>
-                  <li>
-                    <i className="humidity"></i>Humidity:{" "}
-                    <span>{time.main.humidity}</span>%
-                  </li>
-                  <li>
-                    <i className="wind"></i>Wind: <span>{time.wind.speed}</span>
-                    Km
-                  </li>
-                </ul>
-              </div>
+              <ul>
+                <li>
+                  <i className="humidity"></i>Umidade:{" "}
+                  <span>{time.current.humidity}</span>%
+                </li>
+                <li>
+                  <i className="wind"></i>Vento:{" "}
+                  <span>{time.current.wind_kph}</span>Km
+                </li>
+              </ul>
             </div>
           </div>
-        ) : null}
+        </div>
+      ) : null}
 
-        <form className="input-button" onSubmit={weatherResponse}>
-          <input
-            value={city}
-            onChange={onChange}
-            placeholder="Type your city here"
-          ></input>
-            <button className="button" type="submit">
-                Search
-            </button>
-        </form>
-      </>
-    );
+      <div className="input-botao">
+        <input
+          value={city}
+          onChange={onChange}
+          placeholder="Type your city here"
+        ></input>
+        <div className="button" onClick={onClick}>
+          Search
+        </div>
+      </div>
+    </>
+  );
 }
 
-export default card
+export default Card;
